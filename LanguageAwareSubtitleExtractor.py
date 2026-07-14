@@ -192,9 +192,11 @@ MESSAGES = {
 
 
 def base_directory() -> Path:
-    if os.name == "nt":
-        return Path(os.environ.get("LASX_HOME", r"C:\SubtitlesGenerator"))
-    return Path(os.environ.get("LASX_HOME", str(Path.home() / "SubtitlesGenerator")))
+    """Use the directory that contains this script as the application root."""
+    override = os.environ.get("LASX_HOME", "").strip()
+    if override:
+        return Path(override).expanduser().resolve()
+    return Path(__file__).resolve().parent
 
 
 @dataclass(frozen=True)

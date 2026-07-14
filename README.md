@@ -230,22 +230,21 @@ Preferences are saved automatically and restored on the next launch.
 
 ## 📁 Working folders
 
-On Windows, application data defaults to:
+The application creates its working structure in the same directory as
+`LanguageAwareSubtitleExtractor.py`:
 
 ```text
-C:\SubtitlesGenerator
-├── To Process   # Drop new media here
-├── Output       # Completed .srt and .txt files
-├── Processed    # Successfully processed source media
-├── Errors       # Failed media and .error.log diagnostics
-├── Temporary    # Short-lived audio chunks and partial outputs
-└── settings.json
+LanguageAwareSubtitleExtractor/
+├── LanguageAwareSubtitleExtractor.py
+├── To Process/    # Drop new media here
+├── Output/        # Completed .srt and .txt files
+├── Processed/     # Successfully processed source media
+├── Errors/        # Failed media and .error.log diagnostics
+├── Temporary/     # Short-lived audio chunks and partial outputs
+└── settings.json  # Saved menu and language preferences
 ```
 
-On Linux and macOS, the default is `~/SubtitlesGenerator`.
-
-To use a different location, set the `LASX_HOME` environment variable before
-launching:
+To use a different root, set the `LASX_HOME` environment variable before launching:
 
 ```powershell
 $env:LASX_HOME = "D:\My Subtitle Workspace"
