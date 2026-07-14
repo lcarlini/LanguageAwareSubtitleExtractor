@@ -73,10 +73,11 @@ folder for media, and processes each file locally.
     <td width="50%" valign="top">
       <h3>🧠 Intelligent transcription</h3>
       <ul>
-        <li>Local Faster-Whisper inference</li>
+        <li>Local Faster-Whisper on the strongest NVIDIA GPU</li>
+        <li>Auto CUDA setup for RTX 40/50-series cards</li>
+        <li>Larger models when VRAM allows (up to <code>large-v3</code>)</li>
         <li>20 widely spoken source languages</li>
         <li>Metadata-aware audio-track matching</li>
-        <li>GPU acceleration with CPU fallback</li>
       </ul>
     </td>
     <td width="50%" valign="top">
@@ -95,6 +96,7 @@ folder for media, and processes each file locally.
       <ul>
         <li>English, Portuguese, and Spanish UI</li>
         <li>Remembered language preferences</li>
+        <li>Optional noise-reduction toggle</li>
         <li>Live extraction and transcription progress</li>
         <li>Simple watched-folder workflow</li>
       </ul>
@@ -213,8 +215,10 @@ python3 ./LanguageAwareSubtitleExtractor.py
 ```
 
 No separate `pip install` or FFmpeg installation is normally required. At startup,
-the script checks for `av`, `faster-whisper`, `imageio-ffmpeg`, and `tqdm`, then
-installs anything missing into the active Python environment.
+the script checks for `av`, `colorama`, `faster-whisper`, `imageio-ffmpeg`, `tqdm`,
+and the NVIDIA CUDA runtime wheels (`nvidia-cublas-cu12`, `nvidia-cudnn-cu12`,
+`nvidia-cuda-nvrtc-cu12`), then installs anything missing into the active Python
+environment.
 
 ### Configure and monitor
 
@@ -222,11 +226,13 @@ From the main menu:
 
 1. Select the menu language if needed.
 2. Select the original spoken language of the media.
-3. Choose **Start monitoring and processing**.
-4. Copy audio or video files into the displayed `To Process` folder.
-5. Press <kbd>Ctrl</kbd> + <kbd>C</kbd> to stop monitoring and return to the menu.
+3. Optionally toggle **noise reduction**.
+4. Choose **Start monitoring**.
+5. Copy audio or video files into the `To Process` folder.
+6. When a file finishes, the watcher keeps running and waits for the next one.
+7. Press <kbd>Ctrl</kbd> + <kbd>C</kbd> to stop monitoring and return to the menu.
 
-Preferences are saved automatically and restored on the next launch.
+Preferences (menu language, audio language, noise reduction) are saved automatically.
 
 ## 📁 Working folders
 
@@ -241,7 +247,7 @@ LanguageAwareSubtitleExtractor/
 ├── Processed/     # Successfully processed source media
 ├── Errors/        # Failed media and .error.log diagnostics
 ├── Temporary/     # Short-lived audio chunks and partial outputs
-└── settings.json  # Saved menu and language preferences
+└── settings.json  # Saved menu, language, and noise preferences
 ```
 
 To use a different root, set the `LASX_HOME` environment variable before launching:
@@ -339,9 +345,12 @@ environment and model cache.
 <details>
 <summary><strong>Transcription uses the CPU</strong></summary>
 
-GPU processing requires a supported NVIDIA GPU and a CUDA environment compatible
-with CTranslate2. If GPU initialization or inference fails, the application
-intentionally retries on CPU instead of abandoning the file.
+The app now prefers your strongest NVIDIA GPU and tries multiple GPU compute modes
+(`float16`, `bfloat16`, `float32`, …) before CPU. On RTX 50-series cards it also
+installs/loads the CUDA 12 libraries required by Faster-Whisper.
+
+If it still falls back to CPU, the console shows the exact GPU error. Common causes:
+missing CUDA wheels, an outdated GPU driver, or another process locking the GPU.
 
 </details>
 
