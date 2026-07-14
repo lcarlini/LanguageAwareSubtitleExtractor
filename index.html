@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LanguageAwareSubtitleExtractor — Local AI Subtitles</title>
+<meta name="description" content="Turn any audio or video into synchronized subtitles with local AI. Multilingual, GPU-accelerated, and private by design." />
+<meta name="theme-color" content="#0f172a" />
+
+<!-- Open Graph / social -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="LanguageAwareSubtitleExtractor — Local AI Subtitles" />
+<meta property="og:description" content="Drop in media. Choose a language. Receive production-ready subtitles — 100% on your machine." />
+<meta property="og:url" content="https://lcarlini.github.io/LanguageAwareSubtitleExtractor/" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+
+<style>
+  :root {
+    --bg: #0b1120;
+    --bg-soft: #0f172a;
+    --card: rgba(255, 255, 255, 0.04);
+    --card-border: rgba(255, 255, 255, 0.10);
+    --text: #e2e8f0;
+    --text-dim: #94a3b8;
+    --brand: #7c3aed;
+    --brand-2: #06b6d4;
+    --brand-3: #22d3ee;
+    --accent: #f59e0b;
+    --green: #22c55e;
+    --radius: 18px;
+    --shadow: 0 20px 60px -20px rgba(6, 182, 212, 0.35);
+    --maxw: 1120px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Animated aurora background */
+  .aurora {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background:
+      radial-gradient(45% 40% at 15% 15%, rgba(124, 58, 237, 0.35), transparent 60%),
+      radial-gradient(45% 40% at 85% 20%, rgba(6, 182, 212, 0.30), transparent 60%),
+      radial-gradient(60% 50% at 50% 100%, rgba(34, 211, 238, 0.18), transparent 65%),
+      var(--bg);
+    animation: drift 18s ease-in-out infinite alternate;
+  }
+  .grid-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(circle at 50% 30%, black, transparent 80%);
+  }
+  @keyframes drift {
+    0%   { transform: translate3d(0, 0, 0) scale(1); }
+    100% { transform: translate3d(0, -20px, 0) scale(1.05); }
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  .wrap { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+
+  /* Navbar */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(14px);
+    background: rgba(11, 17, 32, 0.7);
+    border-bottom: 1px solid var(--card-border);
+  }
+  .nav {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 68px;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: -0.02em; }
+  .logo .mark {
+    width: 34px; height: 34px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    display: grid; place-items: center; font-size: 18px;
+    box-shadow: 0 6px 18px -6px var(--brand);
+  }
+  .logo span.name { font-size: 15px; }
+  .nav-links { display: flex; gap: 26px; align-items: center; }
+  .nav-links a { color: var(--text-dim); font-weight: 500; font-size: 14px; transition: color .2s; }
+  .nav-links a:hover { color: var(--text); }
+
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+
+  .lang-switch {
+    display: flex; background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 999px; padding: 3px; gap: 2px;
+  }
+  .lang-switch button {
+    border: 0; background: transparent; color: var(--text-dim);
+    font-weight: 700; font-size: 12px; padding: 6px 11px; border-radius: 999px;
+    cursor: pointer; transition: all .2s; font-family: inherit;
+  }
+  .lang-switch button.active {
+    background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    color: white; box-shadow: 0 4px 12px -4px var(--brand);
+  }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 9px;
+    font-weight: 700; font-size: 14px; padding: 11px 20px;
+    border-radius: 999px; cursor: pointer; border: 1px solid transparent;
+    transition: transform .15s ease, box-shadow .2s ease, background .2s;
+    white-space: nowrap;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    color: white; box-shadow: var(--shadow);
+  }
+  .btn-ghost { background: var(--card); border-color: var(--card-border); color: var(--text); }
+  .btn-lg { padding: 15px 28px; font-size: 15px; }
+
+  .nav-ghost { padding: 8px 16px; font-size: 13px; }
+
+  /* Hero */
+  .hero { text-align: center; padding: 92px 0 70px; position: relative; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--card); border: 1px solid var(--card-border);
+    padding: 7px 15px; border-radius: 999px; font-size: 13px; color: var(--text-dim);
+    margin-bottom: 26px;
+  }
+  .pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px var(--green); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  .hero h1 {
+    font-size: clamp(38px, 7vw, 76px); font-weight: 900; letter-spacing: -0.035em;
+    line-height: 1.02; margin-bottom: 22px;
+  }
+  .hero h1 .grad {
+    background: linear-gradient(120deg, var(--brand-3), var(--brand), var(--brand-2));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero p.sub { font-size: clamp(16px, 2.4vw, 21px); color: var(--text-dim); max-width: 680px; margin: 0 auto 38px; }
+  .hero-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+  .trust { margin-top: 40px; display: flex; gap: 26px; justify-content: center; flex-wrap: wrap; color: var(--text-dim); font-size: 13px; }
+  .trust span { display: inline-flex; align-items: center; gap: 7px; }
+
+  /* Terminal mockup */
+  .terminal {
+    max-width: 760px; margin: 60px auto 0; text-align: left;
+    background: #05080f; border: 1px solid var(--card-border);
+    border-radius: 14px; overflow: hidden; box-shadow: var(--shadow);
+  }
+  .terminal .bar { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--card-border); }
+  .terminal .bar i { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+  .terminal .bar .r { background: #ff5f56; } .terminal .bar .y { background: #ffbd2e; } .terminal .bar .g { background: #27c93f; }
+  .terminal .bar .title { margin-left: 10px; font-size: 12px; color: var(--text-dim); font-family: "JetBrains Mono", monospace; }
+  .terminal pre { padding: 20px; font-family: "JetBrains Mono", monospace; font-size: 13px; line-height: 1.7; overflow-x: auto; }
+  .c-cy { color: #38bdf8; } .c-gr { color: #4ade80; } .c-ye { color: #fbbf24; } .c-mg { color: #c084fc; } .c-dim { color: #64748b; }
+
+  /* Sections */
+  section { padding: 80px 0; }
+  .section-head { text-align: center; max-width: 640px; margin: 0 auto 54px; }
+  .section-head .eyebrow { color: var(--brand-3); font-weight: 700; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
+  .section-head h2 { font-size: clamp(28px, 4vw, 42px); font-weight: 800; letter-spacing: -0.03em; margin: 12px 0 14px; }
+  .section-head p { color: var(--text-dim); font-size: 17px; }
+
+  /* Feature grid */
+  .features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .feature {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: var(--radius); padding: 28px; transition: transform .2s, border-color .2s, background .2s;
+  }
+  .feature:hover { transform: translateY(-5px); border-color: rgba(124,58,237,0.5); background: rgba(124,58,237,0.06); }
+  .feature .ico { font-size: 28px; margin-bottom: 16px; display: block; }
+  .feature h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .feature p { color: var(--text-dim); font-size: 15px; }
+
+  /* Steps */
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; counter-reset: step; }
+  .step {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: var(--radius); padding: 28px 24px; position: relative;
+  }
+  .step .num {
+    width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center;
+    background: linear-gradient(135deg, var(--brand), var(--brand-2)); color: white;
+    font-weight: 800; font-size: 18px; margin-bottom: 16px;
+  }
+  .step h3 { font-size: 16px; margin-bottom: 8px; }
+  .step p { color: var(--text-dim); font-size: 14px; }
+
+  /* Download */
+  .download-card {
+    background: linear-gradient(135deg, rgba(124,58,237,0.14), rgba(6,182,212,0.10));
+    border: 1px solid rgba(124,58,237,0.35);
+    border-radius: 26px; padding: 52px 40px; text-align: center; box-shadow: var(--shadow);
+  }
+  .download-card h2 { font-size: clamp(26px, 4vw, 38px); font-weight: 800; letter-spacing: -0.03em; margin-bottom: 12px; }
+  .download-card p { color: var(--text-dim); font-size: 17px; max-width: 560px; margin: 0 auto 30px; }
+  .download-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .req { margin-top: 30px; display: flex; gap: 22px; justify-content: center; flex-wrap: wrap; font-size: 13px; color: var(--text-dim); }
+  .req span { display: inline-flex; align-items: center; gap: 7px; }
+
+  /* Guide (non technical) */
+  .guide { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px; align-items: center; }
+  .guide-list { display: flex; flex-direction: column; gap: 18px; }
+  .guide-item { display: flex; gap: 16px; align-items: flex-start; }
+  .guide-item .badge {
+    flex: 0 0 auto; width: 44px; height: 44px; border-radius: 12px;
+    background: var(--card); border: 1px solid var(--card-border);
+    display: grid; place-items: center; font-size: 20px;
+  }
+  .guide-item h4 { font-size: 16px; margin-bottom: 3px; }
+  .guide-item p { color: var(--text-dim); font-size: 14px; }
+  .folder-card {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: var(--radius); padding: 26px; font-family: "JetBrains Mono", monospace; font-size: 13px;
+  }
+  .folder-card .line { display: flex; gap: 10px; padding: 5px 0; color: var(--text-dim); }
+  .folder-card .line b { color: var(--text); font-weight: 600; }
+  .folder-card .k { color: var(--brand-3); }
+
+  /* CTA repo */
+  .repo-note {
+    text-align: center; background: var(--card); border: 1px solid var(--card-border);
+    border-radius: var(--radius); padding: 40px;
+  }
+  .repo-note h3 { font-size: 22px; margin-bottom: 10px; }
+  .repo-note p { color: var(--text-dim); margin-bottom: 22px; }
+
+  /* Footer */
+  footer { border-top: 1px solid var(--card-border); padding: 40px 0; margin-top: 40px; }
+  .foot { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; color: var(--text-dim); font-size: 14px; }
+  .foot-links { display: flex; gap: 22px; }
+  .foot-links a:hover { color: var(--text); }
+
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+
+  @media (max-width: 900px) {
+    .features { grid-template-columns: 1fr 1fr; }
+    .steps { grid-template-columns: 1fr 1fr; }
+    .guide { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+  }
+  @media (max-width: 560px) {
+    .features, .steps { grid-template-columns: 1fr; }
+    .hero { padding: 60px 0 40px; }
+  }
+</style>
+</head>
+<body>
+<div class="aurora"></div>
+<div class="grid-overlay"></div>
+
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="#top">
+      <span class="mark">🎬</span>
+      <span class="name">LanguageAware<span style="color:var(--brand-3)">Subtitle</span>Extractor</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#features" data-i18n="nav_features">Features</a>
+      <a href="#how" data-i18n="nav_how">How it works</a>
+      <a href="#guide" data-i18n="nav_guide">Guide</a>
+      <a href="#download" data-i18n="nav_download">Download</a>
+    </nav>
+    <div class="nav-right">
+      <div class="lang-switch" id="langSwitch">
+        <button data-lang="en" class="active">EN</button>
+        <button data-lang="pt">PT</button>
+        <button data-lang="es">ES</button>
+      </div>
+      <a class="btn btn-ghost nav-ghost" href="https://github.com/lcarlini/LanguageAwareSubtitleExtractor" target="_blank" rel="noopener">
+        ★ GitHub
+      </a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <!-- HERO -->
+  <section class="hero wrap">
+    <span class="pill"><span class="dot"></span><span data-i18n="hero_pill">100% local · GPU-accelerated · Private</span></span>
+    <h1 data-i18n="hero_title_html">Turn any video into<br /><span class="grad">perfect subtitles</span></h1>
+    <p class="sub" data-i18n="hero_sub">Drop in your media, pick a language, and let local AI generate synchronized subtitles and clean transcripts — without uploading anything to the cloud.</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary btn-lg" href="#download">⬇️ <span data-i18n="hero_cta_download">Download free</span></a>
+      <a class="btn btn-ghost btn-lg" href="#guide">📖 <span data-i18n="hero_cta_guide">How to use</span></a>
+    </div>
+    <div class="trust">
+      <span>🌍 <span data-i18n="trust_langs">20 spoken languages</span></span>
+      <span>🚀 <span data-i18n="trust_gpu">NVIDIA GPU acceleration</span></span>
+      <span>🎬 <span data-i18n="trust_formats">Any audio or video</span></span>
+      <span>🔐 <span data-i18n="trust_private">No cloud, no accounts</span></span>
+    </div>
+
+    <!-- Terminal mockup -->
+    <div class="terminal reveal">
+      <div class="bar"><i class="r"></i><i class="y"></i><i class="g"></i><span class="title">LanguageAwareSubtitleExtractor</span></div>
+      <pre><span class="c-cy">🎬 Processing:</span> lecture-2026.mp4
+<span class="c-gr">🚀 GPU ready:</span> NVIDIA GeForce RTX 5070 Ti (16 GB)
+<span class="c-mg">🧠 Loading AI model 'large-v3'...</span>
+<span class="c-gr">⚙️  Device: CUDA · float16 · large-v3</span>
+<span class="c-cy">📊 Progress:</span> <span class="c-gr">████████████████████</span> 100%
+<span class="c-gr">✅ Done →</span> Output/lecture-2026.srt</pre>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features" class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow" data-i18n="feat_eyebrow">Why you'll love it</div>
+      <h2 data-i18n="feat_title">Professional subtitles, zero hassle</h2>
+      <p data-i18n="feat_sub">Everything runs on your own computer. Fast, private, and built for long recordings.</p>
+    </div>
+    <div class="features">
+      <div class="feature reveal"><span class="ico">⚡</span><h3 data-i18n="f1_t">Automatic setup</h3><p data-i18n="f1_d">It installs everything it needs on the first run. No manual configuration.</p></div>
+      <div class="feature reveal"><span class="ico">🌍</span><h3 data-i18n="f2_t">Multilingual</h3><p data-i18n="f2_d">Menus in English, Portuguese, and Spanish. Transcribe 20 spoken languages.</p></div>
+      <div class="feature reveal"><span class="ico">🚀</span><h3 data-i18n="f3_t">GPU powered</h3><p data-i18n="f3_d">Uses your strongest NVIDIA GPU automatically, with a safe CPU fallback.</p></div>
+      <div class="feature reveal"><span class="ico">♾️</span><h3 data-i18n="f4_t">Handles huge files</h3><p data-i18n="f4_d">Processes multi-hour recordings in chunks — it never freezes on big videos.</p></div>
+      <div class="feature reveal"><span class="ico">🎧</span><h3 data-i18n="f5_t">Noise reduction</h3><p data-i18n="f5_d">Optional audio cleanup for clearer results on noisy recordings.</p></div>
+      <div class="feature reveal"><span class="ico">🔐</span><h3 data-i18n="f6_t">Private by design</h3><p data-i18n="f6_d">Your media never leaves your machine. No cloud, no accounts, no tracking.</p></div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how" class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow" data-i18n="how_eyebrow">Simple workflow</div>
+      <h2 data-i18n="how_title">From media to subtitles in 4 steps</h2>
+      <p data-i18n="how_sub">A watched-folder workflow anyone can follow.</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal"><div class="num">1</div><h3 data-i18n="s1_t">Start the app</h3><p data-i18n="s1_d">Run the script — it prepares itself automatically.</p></div>
+      <div class="step reveal"><div class="num">2</div><h3 data-i18n="s2_t">Pick a language</h3><p data-i18n="s2_d">Choose the spoken language of your media.</p></div>
+      <div class="step reveal"><div class="num">3</div><h3 data-i18n="s3_t">Drop your files</h3><p data-i18n="s3_d">Copy videos or audio into the "To Process" folder.</p></div>
+      <div class="step reveal"><div class="num">4</div><h3 data-i18n="s4_t">Get subtitles</h3><p data-i18n="s4_d">Find ready .srt and .txt files in the "Output" folder.</p></div>
+    </div>
+  </section>
+
+  <!-- GUIDE (non technical) -->
+  <section id="guide" class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow" data-i18n="guide_eyebrow">For everyone</div>
+      <h2 data-i18n="guide_title">How to use it (no tech skills needed)</h2>
+      <p data-i18n="guide_sub">If you can copy a file into a folder, you can use this tool.</p>
+    </div>
+    <div class="guide">
+      <div class="guide-list">
+        <div class="guide-item reveal"><span class="badge">🐍</span><div><h4 data-i18n="g1_t">1. Install Python (once)</h4><p data-i18n="g1_d">Download Python from python.org and, during install, check "Add to PATH".</p></div></div>
+        <div class="guide-item reveal"><span class="badge">⬇️</span><div><h4 data-i18n="g2_t">2. Download the tool</h4><p data-i18n="g2_d">Get the ZIP from the button below and unzip it anywhere on your computer.</p></div></div>
+        <div class="guide-item reveal"><span class="badge">▶️</span><div><h4 data-i18n="g3_t">3. Double-click to run</h4><p data-i18n="g3_d">Open the folder and run the script. The first time, it sets everything up for you.</p></div></div>
+        <div class="guide-item reveal"><span class="badge">🎬</span><div><h4 data-i18n="g4_t">4. Add your media</h4><p data-i18n="g4_d">Copy your videos into the "To Process" folder that appears.</p></div></div>
+        <div class="guide-item reveal"><span class="badge">✅</span><div><h4 data-i18n="g5_t">5. Collect subtitles</h4><p data-i18n="g5_d">Your subtitles appear automatically in the "Output" folder. That's it!</p></div></div>
+      </div>
+      <div class="folder-card reveal">
+        <div class="line"><span class="k">📁</span><b>LanguageAwareSubtitleExtractor/</b></div>
+        <div class="line" style="padding-left:18px"><span class="k">📥</span> To Process/ <span class="c-dim" data-i18n="fc_in">— drop media here</span></div>
+        <div class="line" style="padding-left:18px"><span class="k">✨</span> Output/ <span class="c-dim" data-i18n="fc_out">— subtitles appear here</span></div>
+        <div class="line" style="padding-left:18px"><span class="k">✅</span> Processed/ <span class="c-dim" data-i18n="fc_done">— finished originals</span></div>
+        <div class="line" style="padding-left:18px"><span class="k">🧾</span> Errors/ <span class="c-dim" data-i18n="fc_err">— problem reports</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DOWNLOAD -->
+  <section id="download" class="wrap">
+    <div class="download-card reveal">
+      <h2 data-i18n="dl_title">Get started for free</h2>
+      <p data-i18n="dl_sub">Open source and free forever. Download the latest version and start creating subtitles in minutes.</p>
+      <div class="download-cta">
+        <a class="btn btn-primary btn-lg" href="https://github.com/lcarlini/LanguageAwareSubtitleExtractor/archive/refs/heads/main.zip">
+          ⬇️ <span data-i18n="dl_zip">Download ZIP</span>
+        </a>
+        <a class="btn btn-ghost btn-lg" href="https://github.com/lcarlini/LanguageAwareSubtitleExtractor/releases" target="_blank" rel="noopener">
+          🏷️ <span data-i18n="dl_releases">Releases</span>
+        </a>
+      </div>
+      <div class="req">
+        <span>💻 <span data-i18n="req_os">Windows · macOS · Linux</span></span>
+        <span>🐍 <span data-i18n="req_py">Python 3.9+</span></span>
+        <span>🎮 <span data-i18n="req_gpu">NVIDIA GPU optional</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- REPO NOTE -->
+  <section class="wrap" style="padding-top:0">
+    <div class="repo-note reveal">
+      <h3 data-i18n="repo_t">Want the technical details?</h3>
+      <p data-i18n="repo_d">Full documentation, architecture, and advanced options live in the GitHub repository.</p>
+      <a class="btn btn-ghost btn-lg" href="https://github.com/lcarlini/LanguageAwareSubtitleExtractor" target="_blank" rel="noopener">
+        📚 <span data-i18n="repo_cta">Read the full docs on GitHub</span>
+      </a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div>© <span id="year"></span> LanguageAwareSubtitleExtractor · <span data-i18n="foot_license">MIT License</span></div>
+    <div class="foot-links">
+      <a href="https://github.com/lcarlini/LanguageAwareSubtitleExtractor" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/lcarlini/LanguageAwareSubtitleExtractor/issues" target="_blank" rel="noopener" data-i18n="foot_support">Support</a>
+      <a href="#top" data-i18n="foot_top">Back to top</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const I18N = {
+    en: {
+      nav_features: "Features", nav_how: "How it works", nav_guide: "Guide", nav_download: "Download",
+      hero_pill: "100% local · GPU-accelerated · Private",
+      hero_title_html: 'Turn any video into<br /><span class="grad">perfect subtitles</span>',
+      hero_sub: "Drop in your media, pick a language, and let local AI generate synchronized subtitles and clean transcripts — without uploading anything to the cloud.",
+      hero_cta_download: "Download free", hero_cta_guide: "How to use",
+      trust_langs: "20 spoken languages", trust_gpu: "NVIDIA GPU acceleration", trust_formats: "Any audio or video", trust_private: "No cloud, no accounts",
+      feat_eyebrow: "Why you'll love it", feat_title: "Professional subtitles, zero hassle",
+      feat_sub: "Everything runs on your own computer. Fast, private, and built for long recordings.",
+      f1_t: "Automatic setup", f1_d: "It installs everything it needs on the first run. No manual configuration.",
+      f2_t: "Multilingual", f2_d: "Menus in English, Portuguese, and Spanish. Transcribe 20 spoken languages.",
+      f3_t: "GPU powered", f3_d: "Uses your strongest NVIDIA GPU automatically, with a safe CPU fallback.",
+      f4_t: "Handles huge files", f4_d: "Processes multi-hour recordings in chunks — it never freezes on big videos.",
+      f5_t: "Noise reduction", f5_d: "Optional audio cleanup for clearer results on noisy recordings.",
+      f6_t: "Private by design", f6_d: "Your media never leaves your machine. No cloud, no accounts, no tracking.",
+      how_eyebrow: "Simple workflow", how_title: "From media to subtitles in 4 steps", how_sub: "A watched-folder workflow anyone can follow.",
+      s1_t: "Start the app", s1_d: "Run the script — it prepares itself automatically.",
+      s2_t: "Pick a language", s2_d: "Choose the spoken language of your media.",
+      s3_t: "Drop your files", s3_d: 'Copy videos or audio into the "To Process" folder.',
+      s4_t: "Get subtitles", s4_d: 'Find ready .srt and .txt files in the "Output" folder.',
+      guide_eyebrow: "For everyone", guide_title: "How to use it (no tech skills needed)", guide_sub: "If you can copy a file into a folder, you can use this tool.",
+      g1_t: "1. Install Python (once)", g1_d: 'Download Python from python.org and, during install, check "Add to PATH".',
+      g2_t: "2. Download the tool", g2_d: "Get the ZIP from the button below and unzip it anywhere on your computer.",
+      g3_t: "3. Double-click to run", g3_d: "Open the folder and run the script. The first time, it sets everything up for you.",
+      g4_t: "4. Add your media", g4_d: 'Copy your videos into the "To Process" folder that appears.',
+      g5_t: "5. Collect subtitles", g5_d: 'Your subtitles appear automatically in the "Output" folder. That\'s it!',
+      fc_in: "— drop media here", fc_out: "— subtitles appear here", fc_done: "— finished originals", fc_err: "— problem reports",
+      dl_title: "Get started for free", dl_sub: "Open source and free forever. Download the latest version and start creating subtitles in minutes.",
+      dl_zip: "Download ZIP", dl_releases: "Releases",
+      req_os: "Windows · macOS · Linux", req_py: "Python 3.9+", req_gpu: "NVIDIA GPU optional",
+      repo_t: "Want the technical details?", repo_d: "Full documentation, architecture, and advanced options live in the GitHub repository.",
+      repo_cta: "Read the full docs on GitHub",
+      foot_license: "MIT License", foot_support: "Support", foot_top: "Back to top"
+    },
+    pt: {
+      nav_features: "Recursos", nav_how: "Como funciona", nav_guide: "Guia", nav_download: "Baixar",
+      hero_pill: "100% local · Acelerado por GPU · Privado",
+      hero_title_html: 'Transforme vídeos em<br /><span class="grad">legendas perfeitas</span>',
+      hero_sub: "Coloque sua mídia, escolha um idioma e deixe a IA local gerar legendas sincronizadas e transcrições limpas — sem enviar nada para a nuvem.",
+      hero_cta_download: "Baixar grátis", hero_cta_guide: "Como usar",
+      trust_langs: "20 idiomas falados", trust_gpu: "Aceleração por GPU NVIDIA", trust_formats: "Qualquer áudio ou vídeo", trust_private: "Sem nuvem, sem contas",
+      feat_eyebrow: "Por que você vai amar", feat_title: "Legendas profissionais, sem complicação",
+      feat_sub: "Tudo roda no seu próprio computador. Rápido, privado e feito para gravações longas.",
+      f1_t: "Configuração automática", f1_d: "Instala tudo o que precisa na primeira execução. Sem configuração manual.",
+      f2_t: "Multilíngue", f2_d: "Menus em inglês, português e espanhol. Transcreve 20 idiomas falados.",
+      f3_t: "Potência de GPU", f3_d: "Usa sua GPU NVIDIA mais forte automaticamente, com fallback seguro para CPU.",
+      f4_t: "Lida com arquivos enormes", f4_d: "Processa gravações de horas em partes — nunca trava em vídeos grandes.",
+      f5_t: "Redução de ruído", f5_d: "Limpeza de áudio opcional para resultados mais claros em gravações ruidosas.",
+      f6_t: "Privado por natureza", f6_d: "Sua mídia nunca sai da sua máquina. Sem nuvem, sem contas, sem rastreamento.",
+      how_eyebrow: "Fluxo simples", how_title: "Da mídia às legendas em 4 passos", how_sub: "Um fluxo de pasta monitorada que qualquer um segue.",
+      s1_t: "Inicie o app", s1_d: "Execute o script — ele se prepara automaticamente.",
+      s2_t: "Escolha o idioma", s2_d: "Selecione o idioma falado na sua mídia.",
+      s3_t: "Solte seus arquivos", s3_d: 'Copie vídeos ou áudios para a pasta "To Process".',
+      s4_t: "Receba as legendas", s4_d: 'Encontre arquivos .srt e .txt prontos na pasta "Output".',
+      guide_eyebrow: "Para todos", guide_title: "Como usar (sem conhecimento técnico)", guide_sub: "Se você sabe copiar um arquivo para uma pasta, sabe usar esta ferramenta.",
+      g1_t: "1. Instale o Python (uma vez)", g1_d: 'Baixe o Python em python.org e, na instalação, marque "Add to PATH".',
+      g2_t: "2. Baixe a ferramenta", g2_d: "Pegue o ZIP no botão abaixo e descompacte em qualquer lugar do computador.",
+      g3_t: "3. Clique para executar", g3_d: "Abra a pasta e execute o script. Na primeira vez, ele configura tudo para você.",
+      g4_t: "4. Adicione sua mídia", g4_d: 'Copie seus vídeos para a pasta "To Process" que aparece.',
+      g5_t: "5. Colete as legendas", g5_d: 'Suas legendas aparecem automaticamente na pasta "Output". Simples assim!',
+      fc_in: "— solte a mídia aqui", fc_out: "— legendas aparecem aqui", fc_done: "— originais finalizados", fc_err: "— relatórios de erro",
+      dl_title: "Comece de graça", dl_sub: "Código aberto e gratuito para sempre. Baixe a versão mais recente e crie legendas em minutos.",
+      dl_zip: "Baixar ZIP", dl_releases: "Versões",
+      req_os: "Windows · macOS · Linux", req_py: "Python 3.9+", req_gpu: "GPU NVIDIA opcional",
+      repo_t: "Quer os detalhes técnicos?", repo_d: "Documentação completa, arquitetura e opções avançadas estão no repositório do GitHub.",
+      repo_cta: "Ver a documentação no GitHub",
+      foot_license: "Licença MIT", foot_support: "Suporte", foot_top: "Voltar ao topo"
+    },
+    es: {
+      nav_features: "Funciones", nav_how: "Cómo funciona", nav_guide: "Guía", nav_download: "Descargar",
+      hero_pill: "100% local · Acelerado por GPU · Privado",
+      hero_title_html: 'Convierte cualquier video en<br /><span class="grad">subtítulos perfectos</span>',
+      hero_sub: "Coloca tu contenido, elige un idioma y deja que la IA local genere subtítulos sincronizados y transcripciones limpias — sin subir nada a la nube.",
+      hero_cta_download: "Descargar gratis", hero_cta_guide: "Cómo usar",
+      trust_langs: "20 idiomas hablados", trust_gpu: "Aceleración por GPU NVIDIA", trust_formats: "Cualquier audio o video", trust_private: "Sin nube, sin cuentas",
+      feat_eyebrow: "Por qué te encantará", feat_title: "Subtítulos profesionales, sin complicaciones",
+      feat_sub: "Todo se ejecuta en tu propia computadora. Rápido, privado y hecho para grabaciones largas.",
+      f1_t: "Configuración automática", f1_d: "Instala todo lo que necesita en el primer uso. Sin configuración manual.",
+      f2_t: "Multilingüe", f2_d: "Menús en inglés, portugués y español. Transcribe 20 idiomas hablados.",
+      f3_t: "Potencia de GPU", f3_d: "Usa tu GPU NVIDIA más potente automáticamente, con respaldo seguro en CPU.",
+      f4_t: "Maneja archivos enormes", f4_d: "Procesa grabaciones de horas por partes — nunca se congela con videos grandes.",
+      f5_t: "Reducción de ruido", f5_d: "Limpieza de audio opcional para resultados más claros en grabaciones ruidosas.",
+      f6_t: "Privado por diseño", f6_d: "Tu contenido nunca sale de tu equipo. Sin nube, sin cuentas, sin rastreo.",
+      how_eyebrow: "Flujo simple", how_title: "De medio a subtítulos en 4 pasos", how_sub: "Un flujo de carpeta monitoreada que cualquiera puede seguir.",
+      s1_t: "Inicia la app", s1_d: "Ejecuta el script — se prepara automáticamente.",
+      s2_t: "Elige un idioma", s2_d: "Selecciona el idioma hablado de tu contenido.",
+      s3_t: "Suelta tus archivos", s3_d: 'Copia videos o audios en la carpeta "To Process".',
+      s4_t: "Obtén subtítulos", s4_d: 'Encuentra archivos .srt y .txt listos en la carpeta "Output".',
+      guide_eyebrow: "Para todos", guide_title: "Cómo usarlo (sin conocimientos técnicos)", guide_sub: "Si sabes copiar un archivo a una carpeta, sabes usar esta herramienta.",
+      g1_t: "1. Instala Python (una vez)", g1_d: 'Descarga Python desde python.org y, al instalar, marca "Add to PATH".',
+      g2_t: "2. Descarga la herramienta", g2_d: "Obtén el ZIP con el botón de abajo y descomprímelo en cualquier lugar.",
+      g3_t: "3. Haz clic para ejecutar", g3_d: "Abre la carpeta y ejecuta el script. La primera vez, configura todo por ti.",
+      g4_t: "4. Agrega tu contenido", g4_d: 'Copia tus videos en la carpeta "To Process" que aparece.',
+      g5_t: "5. Recoge los subtítulos", g5_d: 'Tus subtítulos aparecen automáticamente en la carpeta "Output". ¡Así de fácil!',
+      fc_in: "— suelta el contenido aquí", fc_out: "— los subtítulos aparecen aquí", fc_done: "— originales terminados", fc_err: "— reportes de errores",
+      dl_title: "Empieza gratis", dl_sub: "Código abierto y gratis para siempre. Descarga la última versión y crea subtítulos en minutos.",
+      dl_zip: "Descargar ZIP", dl_releases: "Versiones",
+      req_os: "Windows · macOS · Linux", req_py: "Python 3.9+", req_gpu: "GPU NVIDIA opcional",
+      repo_t: "¿Quieres los detalles técnicos?", repo_d: "La documentación completa, la arquitectura y las opciones avanzadas están en el repositorio de GitHub.",
+      repo_cta: "Leer la documentación en GitHub",
+      foot_license: "Licencia MIT", foot_support: "Soporte", foot_top: "Volver arriba"
+    }
+  };
+
+  const HTML_KEYS = new Set(["hero_title_html"]);
+
+  function applyLang(lang) {
+    const dict = I18N[lang] || I18N.en;
+    document.documentElement.lang = lang;
+    document.querySelectorAll("[data-i18n]").forEach((el) => {
+      const key = el.getAttribute("data-i18n");
+      if (!(key in dict)) return;
+      if (HTML_KEYS.has(key)) el.innerHTML = dict[key];
+      else el.textContent = dict[key];
+    });
+    document.querySelectorAll("#langSwitch button").forEach((b) => {
+      b.classList.toggle("active", b.dataset.lang === lang);
+    });
+    try { localStorage.setItem("lasx_lang", lang); } catch (e) {}
+  }
+
+  document.getElementById("langSwitch").addEventListener("click", (e) => {
+    const btn = e.target.closest("button");
+    if (btn) applyLang(btn.dataset.lang);
+  });
+
+  // Initial language: saved > browser > en
+  let initial = "en";
+  try {
+    const saved = localStorage.getItem("lasx_lang");
+    if (saved && I18N[saved]) initial = saved;
+    else {
+      const nav = (navigator.language || "en").slice(0, 2);
+      if (I18N[nav]) initial = nav;
+    }
+  } catch (e) {}
+  applyLang(initial);
+
+  // Year
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  // Reveal on scroll
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => { if (entry.isIntersecting) entry.target.classList.add("in"); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+</script>
+</body>
+</html>

@@ -8,9 +8,14 @@
 <h1 align="center">LanguageAwareSubtitleExtractor</h1>
 
 <p align="center">
-  <a href="#-quick-start"><img alt="Get started" src="https://img.shields.io/badge/GET_STARTED-6D28D9?style=for-the-badge&logo=rocket&logoColor=white"></a>
-  <a href="#-how-the-intelligence-flows"><img alt="Architecture" src="https://img.shields.io/badge/VIEW_FLOW-0891B2?style=for-the-badge&logo=mermaid&logoColor=white"></a>
-  <a href="#-privacy-by-design"><img alt="Local first" src="https://img.shields.io/badge/LOCAL_FIRST-0F766E?style=for-the-badge&logo=shield&logoColor=white"></a>
+  <a href="https://lcarlini.github.io/LanguageAwareSubtitleExtractor/"><img alt="Website" src="https://img.shields.io/badge/🌐_VISIT_WEBSITE-6D28D9?style=for-the-badge&logoColor=white"></a>
+  <a href="#-quick-start"><img alt="Get started" src="https://img.shields.io/badge/GET_STARTED-0891B2?style=for-the-badge&logo=rocket&logoColor=white"></a>
+  <a href="#-how-the-intelligence-flows"><img alt="Architecture" src="https://img.shields.io/badge/VIEW_FLOW-0F766E?style=for-the-badge&logo=mermaid&logoColor=white"></a>
+</p>
+
+<p align="center">
+  <b>🔗 Live site:</b>
+  <a href="https://lcarlini.github.io/LanguageAwareSubtitleExtractor/">lcarlini.github.io/LanguageAwareSubtitleExtractor</a>
 </p>
 
 <p align="center">
