@@ -3,6 +3,17 @@ __pycache__/
 *.py[codz]
 *$py.class
 
+# LanguageAwareSubtitleExtractor runtime data
+# These paths are used when LASX_HOME points to the repository.
+/To Process/
+/Output/
+/Processed/
+/Errors/
+/Temporary/
+/settings.json
+/*.part
+/*.error.log
+
 # C extensions
 *.so
 
