@@ -3,8 +3,7 @@ __pycache__/
 *.py[codz]
 *$py.class
 
-# LanguageAwareSubtitleExtractor runtime data
-# These paths are used when LASX_HOME points to the repository.
+# LanguageAwareSubtitleExtractor runtime data (created beside the script)
 /To Process/
 /Output/
 /Processed/
