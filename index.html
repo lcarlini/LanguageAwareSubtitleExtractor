@@ -239,10 +239,59 @@
   .download-card h2 { font-size: clamp(26px, 4vw, 38px); font-weight: 800; letter-spacing: -0.03em; margin-bottom: 12px; }
   .download-card p { color: var(--text-dim); font-size: 17px; max-width: 560px; margin: 0 auto 30px; }
   .download-cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; align-items: center; }
-  .bmc-wrap { display: flex; justify-content: center; margin-top: 22px; }
-  .bmc-wrap img, .bmc-wrap a { vertical-align: middle; }
   .req { margin-top: 30px; display: flex; gap: 22px; justify-content: center; flex-wrap: wrap; font-size: 13px; color: var(--text-dim); }
   .req span { display: inline-flex; align-items: center; gap: 7px; }
+
+  /* Support / coffee */
+  .support-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+    max-width: 760px; margin: 0 auto;
+  }
+  .support-card {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: var(--radius); padding: 28px 24px; text-align: center;
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    transition: transform .2s, border-color .2s, background .2s;
+  }
+  .support-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(124, 58, 237, 0.45);
+    background: rgba(124, 58, 237, 0.06);
+  }
+  .support-card .support-ico {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: grid; place-items: center; font-size: 26px;
+    background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border);
+  }
+  .support-card.pix .support-ico {
+    background: linear-gradient(135deg, rgba(130, 10, 209, 0.25), rgba(0, 200, 150, 0.18));
+    border-color: rgba(130, 10, 209, 0.4);
+  }
+  .support-card.bmc .support-ico {
+    background: linear-gradient(135deg, rgba(255, 221, 0, 0.2), rgba(255, 170, 0, 0.12));
+    border-color: rgba(255, 221, 0, 0.35);
+  }
+  .support-card h3 { font-size: 18px; font-weight: 700; }
+  .support-card p { color: var(--text-dim); font-size: 14px; line-height: 1.5; flex: 1; }
+  .support-card .support-action { margin-top: 6px; min-height: 52px; display: flex; align-items: center; justify-content: center; }
+  .btn-pix {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: linear-gradient(135deg, #820AD1, #9B30EF);
+    color: white; font-weight: 700; font-size: 14px;
+    padding: 12px 22px; border-radius: 999px;
+    box-shadow: 0 10px 28px -10px rgba(130, 10, 209, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    transition: transform .15s ease, box-shadow .2s ease;
+  }
+  .btn-pix:hover { transform: translateY(-2px); box-shadow: 0 14px 32px -10px rgba(130, 10, 209, 0.8); }
+  .btn-pix .pix-flag { font-size: 16px; line-height: 1; }
+  .support-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--text-dim); margin-top: 2px;
+  }
+  .support-badge.pix-badge { color: #c084fc; }
+  .support-badge.bmc-badge { color: #fbbf24; }
 
   /* Guide (non technical) */
   .guide { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px; align-items: center; }
@@ -288,6 +337,7 @@
     .steps { grid-template-columns: 1fr 1fr; }
     .guide { grid-template-columns: 1fr; }
     .nav-links { display: none; }
+    .support-grid { grid-template-columns: 1fr; max-width: 420px; }
   }
   @media (max-width: 560px) {
     .features, .steps { grid-template-columns: 1fr; }
@@ -447,13 +497,42 @@
           🏷️ <span data-i18n="dl_releases">Releases</span>
         </a>
       </div>
-      <div class="bmc-wrap">
-        <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="leandrocarS" data-color="#FFDD00" data-emoji="" data-font="Cookie" data-text="Buy me a coffee" data-outline-color="#000000" data-font-color="#000000" data-coffee-color="#ffffff"></script>
-      </div>
       <div class="req">
         <span>💻 <span data-i18n="req_os">Windows · macOS · Linux</span></span>
         <span>🐍 <span data-i18n="req_py">Python 3.9+</span></span>
         <span>🎮 <span data-i18n="req_gpu">NVIDIA GPU optional</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUPPORT -->
+  <section id="support" class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow" data-i18n="support_eyebrow">Support the project</div>
+      <h2 data-i18n="support_title">Buy me a coffee</h2>
+      <p data-i18n="support_sub">If this tool saved you time, a coffee helps keep it free and improving.</p>
+    </div>
+    <div class="support-grid reveal">
+      <div class="support-card bmc">
+        <div class="support-ico" aria-hidden="true">☕</div>
+        <span class="support-badge bmc-badge" data-i18n="support_bmc_badge">International</span>
+        <h3 data-i18n="support_bmc_title">Buy Me a Coffee</h3>
+        <p data-i18n="support_bmc_d">Card or PayPal — one-time tip from anywhere in the world.</p>
+        <div class="support-action">
+          <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="leandrocarS" data-color="#FFDD00" data-emoji="" data-font="Cookie" data-text="Buy me a coffee" data-outline-color="#000000" data-font-color="#000000" data-coffee-color="#ffffff"></script>
+        </div>
+      </div>
+      <div class="support-card pix">
+        <div class="support-ico" aria-hidden="true">🇧🇷</div>
+        <span class="support-badge pix-badge" data-i18n="support_pix_badge">Brazil · PIX</span>
+        <h3 data-i18n="support_pix_title">PIX via Nubank</h3>
+        <p data-i18n="support_pix_d">Instant transfer with PIX — open the link and pay in your bank app.</p>
+        <div class="support-action">
+          <a class="btn-pix" href="https://nubank.com.br/cobrar/4salu/6a5911ce-a098-441b-b340-29a387806366" target="_blank" rel="noopener">
+            <span class="pix-flag" aria-hidden="true">🇧🇷</span>
+            <span data-i18n="support_pix_cta">Pay with PIX</span>
+          </a>
+        </div>
       </div>
     </div>
   </section>
@@ -479,7 +558,7 @@
     <div class="foot-links">
       <a href="https://lcarlini.github.io/lcarlini/" target="_blank" rel="noopener" data-i18n="foot_reach">Reach out</a>
       <a href="https://github.com/lcarlini/LanguageAwareSubtitleExtractor" target="_blank" rel="noopener">GitHub</a>
-      <a href="https://github.com/lcarlini/LanguageAwareSubtitleExtractor/issues" target="_blank" rel="noopener" data-i18n="foot_support">Support</a>
+      <a href="#support" data-i18n="foot_support">Support</a>
       <a href="#top" data-i18n="foot_top">Back to top</a>
     </div>
   </div>
@@ -520,6 +599,13 @@
       dl_title: "Get started for free", dl_sub: "Open source and free forever. Download the latest version and start creating subtitles in minutes.",
       dl_zip: "Download ZIP", dl_releases: "Releases",
       req_os: "Windows · macOS · Linux", req_py: "Python 3.9+", req_gpu: "NVIDIA GPU optional",
+      support_eyebrow: "Support the project", support_title: "Buy me a coffee",
+      support_sub: "If this tool saved you time, a coffee helps keep it free and improving.",
+      support_bmc_badge: "International", support_bmc_title: "Buy Me a Coffee",
+      support_bmc_d: "Card or PayPal — one-time tip from anywhere in the world.",
+      support_pix_badge: "Brazil · PIX", support_pix_title: "PIX via Nubank",
+      support_pix_d: "Instant transfer with PIX — open the link and pay in your bank app.",
+      support_pix_cta: "Pay with PIX",
       repo_t: "Want the technical details?", repo_d: "Full documentation, architecture, and advanced options live in the GitHub repository.",
       repo_cta: "Read the full docs on GitHub",
       foot_license: "MIT License",
@@ -559,6 +645,13 @@
       dl_title: "Comece de graça", dl_sub: "Código aberto e gratuito para sempre. Baixe a versão mais recente e crie legendas em minutos.",
       dl_zip: "Baixar ZIP", dl_releases: "Versões",
       req_os: "Windows · macOS · Linux", req_py: "Python 3.9+", req_gpu: "GPU NVIDIA opcional",
+      support_eyebrow: "Apoie o projeto", support_title: "Pague um café",
+      support_sub: "Se esta ferramenta te poupou tempo, um café ajuda a mantê-la gratuita e em evolução.",
+      support_bmc_badge: "Internacional", support_bmc_title: "Buy Me a Coffee",
+      support_bmc_d: "Cartão ou PayPal — contribuição de qualquer lugar do mundo.",
+      support_pix_badge: "Brasil · PIX", support_pix_title: "PIX via Nubank",
+      support_pix_d: "Transferência instantânea via PIX — abra o link e pague no app do seu banco.",
+      support_pix_cta: "Pagar com PIX",
       repo_t: "Quer os detalhes técnicos?", repo_d: "Documentação completa, arquitetura e opções avançadas estão no repositório do GitHub.",
       repo_cta: "Ver a documentação no GitHub",
       foot_license: "Licença MIT",
@@ -598,6 +691,13 @@
       dl_title: "Empieza gratis", dl_sub: "Código abierto y gratis para siempre. Descarga la última versión y crea subtítulos en minutos.",
       dl_zip: "Descargar ZIP", dl_releases: "Versiones",
       req_os: "Windows · macOS · Linux", req_py: "Python 3.9+", req_gpu: "GPU NVIDIA opcional",
+      support_eyebrow: "Apoya el proyecto", support_title: "Invítame un café",
+      support_sub: "Si esta herramienta te ahorró tiempo, un café ayuda a mantenerla gratuita y en mejora continua.",
+      support_bmc_badge: "Internacional", support_bmc_title: "Buy Me a Coffee",
+      support_bmc_d: "Tarjeta o PayPal — aporte desde cualquier lugar del mundo.",
+      support_pix_badge: "Brasil · PIX", support_pix_title: "PIX vía Nubank",
+      support_pix_d: "Transferencia instantánea con PIX — abre el enlace y paga en la app de tu banco.",
+      support_pix_cta: "Pagar con PIX",
       repo_t: "¿Quieres los detalles técnicos?", repo_d: "La documentación completa, la arquitectura y las opciones avanzadas están en el repositorio de GitHub.",
       repo_cta: "Leer la documentación en GitHub",
       foot_license: "Licencia MIT",
