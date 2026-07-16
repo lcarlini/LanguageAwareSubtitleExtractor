@@ -85,6 +85,8 @@ MESSAGES = {
         "install_failed": "❌ Install failed. Run:\n{command}",
         "ready": "✅ Ready",
         "folders": "📂 Workspace: {path}",
+        "credit": "Implemented by Computer Engineer Leandro Carlini Mingorance",
+        "reach_out": "Reach out: https://lcarlini.github.io/lcarlini/",
         "menu_title": "MAIN MENU",
         "menu_start": "▶️  Start monitoring",
         "menu_ui": "🌐 Change menu language",
@@ -139,6 +141,8 @@ MESSAGES = {
         "install_failed": "❌ Falha na instalação. Execute:\n{command}",
         "ready": "✅ Pronto",
         "folders": "📂 Pasta: {path}",
+        "credit": "Implementado pelo Engenheiro de Computação Leandro Carlini Mingorance",
+        "reach_out": "Contato: https://lcarlini.github.io/lcarlini/",
         "menu_title": "MENU PRINCIPAL",
         "menu_start": "▶️  Iniciar monitoramento",
         "menu_ui": "🌐 Alterar idioma do menu",
@@ -193,6 +197,8 @@ MESSAGES = {
         "install_failed": "❌ Falló la instalación. Ejecuta:\n{command}",
         "ready": "✅ Listo",
         "folders": "📂 Carpeta: {path}",
+        "credit": "Implementado por el Ingeniero Informático Leandro Carlini Mingorance",
+        "reach_out": "Contacto: https://lcarlini.github.io/lcarlini/",
         "menu_title": "MENÚ PRINCIPAL",
         "menu_start": "▶️  Iniciar monitoreo",
         "menu_ui": "🌐 Cambiar idioma del menú",
@@ -1365,6 +1371,10 @@ def main() -> int:
     paths.ensure_directories()
     settings = Settings.load(paths.settings)
     try:
+        print()
+        print(message(settings, "credit"))
+        print(message(settings, "reach_out"))
+        print()
         check_python(settings)
         # Install packages first so Theme/colorama/CUDA libs are available afterwards.
         ensure_dependencies(settings, None)
