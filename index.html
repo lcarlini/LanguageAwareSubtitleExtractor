@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>LanguageAwareSubtitleExtractor — Local AI Subtitles</title>
 <meta name="description" content="Turn any audio or video into synchronized subtitles with local AI. Multilingual, GPU-accelerated, and private by design." />
+<meta name="author" content="Computer Engineer Leandro Carlini Mingorance" />
 <meta name="theme-color" content="#0f172a" />
 
 <!-- Open Graph / social -->
@@ -246,8 +247,11 @@
 
   /* Footer */
   footer { border-top: 1px solid var(--card-border); padding: 40px 0; margin-top: 40px; }
-  .foot { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; color: var(--text-dim); font-size: 14px; }
-  .foot-links { display: flex; gap: 22px; }
+  .foot { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; color: var(--text-dim); font-size: 14px; }
+  .foot-credit { display: flex; flex-direction: column; gap: 6px; max-width: 560px; }
+  .foot-credit a { color: var(--brand-3); font-weight: 600; text-decoration: none; }
+  .foot-credit a:hover { text-decoration: underline; }
+  .foot-links { display: flex; gap: 22px; flex-wrap: wrap; }
   .foot-links a:hover { color: var(--text); }
 
   .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
@@ -415,8 +419,12 @@
 
 <footer>
   <div class="wrap foot">
-    <div>© <span id="year"></span> LanguageAwareSubtitleExtractor · <span data-i18n="foot_license">MIT License</span> · <span data-i18n="foot_credit">Implemented by Computer Engineer Leandro Carlini Mingorance</span></div>
+    <div class="foot-credit">
+      <div>© <span id="year"></span> LanguageAwareSubtitleExtractor · <span data-i18n="foot_license">MIT License</span></div>
+      <div data-i18n="foot_credit">Implemented by Computer Engineer <a href="https://lcarlini.github.io/lcarlini/" target="_blank" rel="noopener">Leandro Carlini Mingorance</a></div>
+    </div>
     <div class="foot-links">
+      <a href="https://lcarlini.github.io/lcarlini/" target="_blank" rel="noopener" data-i18n="foot_reach">Reach out</a>
       <a href="https://github.com/lcarlini/LanguageAwareSubtitleExtractor" target="_blank" rel="noopener">GitHub</a>
       <a href="https://github.com/lcarlini/LanguageAwareSubtitleExtractor/issues" target="_blank" rel="noopener" data-i18n="foot_support">Support</a>
       <a href="#top" data-i18n="foot_top">Back to top</a>
@@ -458,7 +466,9 @@
       req_os: "Windows · macOS · Linux", req_py: "Python 3.9+", req_gpu: "NVIDIA GPU optional",
       repo_t: "Want the technical details?", repo_d: "Full documentation, architecture, and advanced options live in the GitHub repository.",
       repo_cta: "Read the full docs on GitHub",
-      foot_license: "MIT License", foot_credit: "Implemented by Computer Engineer Leandro Carlini Mingorance", foot_support: "Support", foot_top: "Back to top"
+      foot_license: "MIT License",
+      foot_credit: 'Implemented by Computer Engineer <a href="https://lcarlini.github.io/lcarlini/" target="_blank" rel="noopener">Leandro Carlini Mingorance</a>',
+      foot_reach: "Reach out", foot_support: "Support", foot_top: "Back to top"
     },
     pt: {
       nav_features: "Recursos", nav_how: "Como funciona", nav_guide: "Guia", nav_download: "Baixar",
@@ -492,7 +502,9 @@
       req_os: "Windows · macOS · Linux", req_py: "Python 3.9+", req_gpu: "GPU NVIDIA opcional",
       repo_t: "Quer os detalhes técnicos?", repo_d: "Documentação completa, arquitetura e opções avançadas estão no repositório do GitHub.",
       repo_cta: "Ver a documentação no GitHub",
-      foot_license: "Licença MIT", foot_credit: "Implementado pelo Engenheiro de Computação Leandro Carlini Mingorance", foot_support: "Suporte", foot_top: "Voltar ao topo"
+      foot_license: "Licença MIT",
+      foot_credit: 'Implementado pelo Engenheiro de Computação <a href="https://lcarlini.github.io/lcarlini/" target="_blank" rel="noopener">Leandro Carlini Mingorance</a>',
+      foot_reach: "Contato", foot_support: "Suporte", foot_top: "Voltar ao topo"
     },
     es: {
       nav_features: "Funciones", nav_how: "Cómo funciona", nav_guide: "Guía", nav_download: "Descargar",
@@ -526,11 +538,13 @@
       req_os: "Windows · macOS · Linux", req_py: "Python 3.9+", req_gpu: "GPU NVIDIA opcional",
       repo_t: "¿Quieres los detalles técnicos?", repo_d: "La documentación completa, la arquitectura y las opciones avanzadas están en el repositorio de GitHub.",
       repo_cta: "Leer la documentación en GitHub",
-      foot_license: "Licencia MIT", foot_credit: "Implementado por el Ingeniero Informático Leandro Carlini Mingorance", foot_support: "Soporte", foot_top: "Volver arriba"
+      foot_license: "Licencia MIT",
+      foot_credit: 'Implementado por el Ingeniero Informático <a href="https://lcarlini.github.io/lcarlini/" target="_blank" rel="noopener">Leandro Carlini Mingorance</a>',
+      foot_reach: "Contacto", foot_support: "Soporte", foot_top: "Volver arriba"
     }
   };
 
-  const HTML_KEYS = new Set(["hero_title_html"]);
+  const HTML_KEYS = new Set(["hero_title_html", "foot_credit"]);
 
   function applyLang(lang) {
     const dict = I18N[lang] || I18N.en;

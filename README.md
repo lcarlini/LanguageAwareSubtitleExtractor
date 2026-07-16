@@ -37,6 +37,13 @@
 </p>
 
 <p align="center">
+  <b>Implemented by Computer Engineer
+  <a href="https://lcarlini.github.io/lcarlini/">Leandro Carlini Mingorance</a></b>
+  <br/>
+  <a href="https://lcarlini.github.io/lcarlini/">Reach out → lcarlini.github.io/lcarlini</a>
+</p>
+
+<p align="center">
   <a href="#-why-this-project">Why</a> •
   <a href="#-experience-layer">Features</a> •
   <a href="#-how-the-intelligence-flows">Flow</a> •
@@ -393,6 +400,12 @@ privacy model, and verify behavior on both short and long media where possible.
 When reporting a processing failure, include the generated error log after removing
 any private paths or media details.
 
+## 👨‍💻 Author
+
+Implemented by **Computer Engineer Leandro Carlini Mingorance**.
+
+Reach out: [lcarlini.github.io/lcarlini](https://lcarlini.github.io/lcarlini/)
+
 ## 📄 License
 
 Distributed under the [MIT License](LICENSE).
@@ -403,6 +416,10 @@ Distributed under the [MIT License](LICENSE).
   <b>Built for long-form media, multilingual voices, and dependable local AI.</b>
   <br/>
   <sub>From sound to meaning—privately, reliably, locally.</sub>
+  <br/><br/>
+  <sub>Implemented by Computer Engineer
+  <a href="https://lcarlini.github.io/lcarlini/">Leandro Carlini Mingorance</a>
+  · <a href="https://lcarlini.github.io/lcarlini/">Reach out</a></sub>
 </p>
 
 <p align="center">

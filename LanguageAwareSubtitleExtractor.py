@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Language-aware, resilient media transcription with automatic setup."""
+"""Language-aware, resilient media transcription with automatic setup.
+
+Implemented by Computer Engineer Leandro Carlini Mingorance.
+Reach out: https://lcarlini.github.io/lcarlini/
+"""
 
 from __future__ import annotations
 
