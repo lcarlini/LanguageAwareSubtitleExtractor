@@ -524,12 +524,24 @@ def check_python(settings: Settings) -> None:
         raise RuntimeError(message(settings, "python_old", required=required, current=current))
 
 
+def module_available(module: str) -> bool:
+    """Return True when a module can be resolved.
+
+    ``importlib.util.find_spec`` raises ``ModuleNotFoundError`` for dotted names
+    (e.g. ``nvidia.cublas``) when the parent package is absent.
+    """
+    try:
+        return importlib.util.find_spec(module) is not None
+    except ModuleNotFoundError:
+        return False
+
+
 def ensure_dependencies(settings: Settings, theme: Theme | None = None) -> None:
     printer = theme.info if theme else print
     printer(message(settings, "checking"))
     missing = []
     for module, package in DEPENDENCIES.items():
-        if importlib.util.find_spec(module) is None:
+        if not module_available(module):
             missing.append(package)
             continue
         # NVIDIA CUDA wheels can be importable yet still miss the DLL folders.
@@ -589,7 +601,7 @@ def ensure_dependencies(settings: Settings, theme: Theme | None = None) -> None:
 
     importlib.invalidate_caches()
     still_missing = [
-        module for module in DEPENDENCIES if importlib.util.find_spec(module) is None
+        module for module in DEPENDENCIES if not module_available(module)
     ]
     if still_missing:
         raise RuntimeError(
